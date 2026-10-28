@@ -44,7 +44,7 @@ for nome_arquivo in os.listdir(pasta_imagens):
         
         elif nome_arquivo.endswith("_direita.png"):
             # Remover pixels da borda esquerda das imagens de coluna da direita, nesse exemplo, 25 pixels
-            caixa_corte = (caixa_corte[0] + 25, caixa_corte[1], caixa_corte[2], caixa_corte[3]) # ATUALIZE AQUI O VALOR DE CORTE PARA A COLUNA DA DIREITA (esquerda, superior, direita, inferior)
+            caixa_corte = (caixa_corte[0] + 26, caixa_corte[1], caixa_corte[2], caixa_corte[3]) # ATUALIZE AQUI O VALOR DE CORTE PARA A COLUNA DA DIREITA (esquerda, superior, direita, inferior)
         
         imagem_cortada = imagem.crop(caixa_corte)
         

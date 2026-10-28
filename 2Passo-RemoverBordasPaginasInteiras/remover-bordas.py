@@ -30,7 +30,14 @@ for nome_arquivo in os.listdir(pasta_imagens):
 
         largura, altura = imagem.size
 
-        caixa_corte = (276, 390, largura - 276, altura - 280) # ATUALIZE AQUI OS VALORES DE CORTE (esquerda, superior, direita, inferior)
+        # Extrai o número da página a partir do nome do arquivo (ex: pagina_enem_10.png -> 10)
+        numero_pagina = int(nome_arquivo.rsplit("_", 1)[-1].split(".")[0])
+
+        if numero_pagina % 2 == 0:
+            caixa_corte = (270, 442, largura - 240, altura - 290) # páginas pares
+        else:
+            caixa_corte = (240, 442, largura - 270, altura - 290) # páginas ímpares
+
         imagem_cortada = imagem.crop(caixa_corte)
 
         caminho_saida = os.path.join(pasta_saida, nome_arquivo)
