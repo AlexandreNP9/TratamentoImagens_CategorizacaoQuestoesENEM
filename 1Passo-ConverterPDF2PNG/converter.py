@@ -18,7 +18,7 @@ OBS5: Seu objetivo é deixar apenas as questões. Por isso abra cada uma das ima
 from pdf2image import convert_from_path
 import os
 
-arquivo = "NOME-DO-PDF-AQUI.pdf"
+arquivo = "2019_PV_reaplicacao_PPL_D1_CD1.pdf"
 pasta_saida = "imagens-convertidas"
 
 if not os.path.exists(pasta_saida):
