@@ -5,126 +5,175 @@ Criação: 02/10/2025
 Atualização: 03/06/2026
 
 OBS1: puxe a imagem "colunas_concatenadas_verticalmente.png" do passo 6 para essa pasta do passo 7
-
 OBS2: puxe a pasta "inteiras" do passo 5 para essa pasta do passo 7
-
-OBS3: este código foi originalmente preparado para percorrer cada pixel de cima para baixo, analizando o penúltimo pixel da direita (linha 55), procurando por um padrão visual vertical de 10 pixels RGB 0-255 (64, 193, 243), seguido de 7 pixels RGB 0-255 (179, 230, 250), 4 px RGB 0-255 (64, 193, 243) e 8 px RGB 0-255 (179, 230, 250). Quando encontrava esse padrão, cortava-se 13 pixels acima de começar o padrão (linha 71).
-
-OBS4: tendo isso em mente, use o GIMP para identificar qual é o padrão visual da sua prova (que indica o início de cada questão), quantos pixels acima do padrão visual você precisa cortar, e também qual pixel é melhor percorrer para procurar por essa faixa. SEJA CRÍTICO(A)!
-
-OBS5: em algumas situações, o pixel procurado é a mesma cor de uma imagem ou letra. Nesses casos, você pode pedir para percorrer uma faixa de determinada altura e largura e determinada cor, e não apenas um pixel. Isso vai depender do padrão visual da sua prova.
-
-OBS6: além disso, em algumas situações, o padrão visual varia um pixel ou outro. Por isso, é interessante considerar uma margem de erro de 3 pixels para mais e 3 pixels para menos em cada uma das faixas do seu padrão visual.
-
-OBS6: use IA para mudar minimamente o código a fim de cortar sua imagem seguindo o padrão visual vertical da sua prova, qual pixel percorrer, qual cor RGB 0-255 procurar, quantos pixels acima do padrão visual cortar, e se necessário, percorrer uma faixa de determinada altura e largura e determinada cor, e não apenas um pixel.
-
-OBS7: rode esse código para cada imagem que você precisa cortar. Atualize as linhas 138 e 139 para identificar a imagem e atualize o nome da pasta de saída também
-
-OBS8: execute o código, e abra as imagens para conferir se as questões foram divididas corretamente. Se não, ajuste os valores de corte e execute novamente.
+OBS3, OBS4, OBS5, OBS6, OBS7, OBS8: (Mantidas do original, código atualizado para novo padrão)
 """
 
 from PIL import Image
 import os
 
-def converter_cor_gimp_para_rgb(gimp_r, gimp_g, gimp_b):
-    """
-    Converte valores do GIMP (0-100) para RGB (0-255)
-    """
-    r = int((gimp_r / 100) * 255)
-    g = int((gimp_g / 100) * 255)
-    b = int((gimp_b / 100) * 255)
-    return (r, g, b)
+def cor_parecida(pixel, cor_alvo, tolerancia=20):
+    """ Verifica se a cor do pixel está dentro da tolerância do RGB alvo """
+    if len(pixel) == 4:  # RGBA
+        r, g, b, a = pixel
+    else:  # RGB
+        r, g, b = pixel[:3]
+        
+    return (abs(r - cor_alvo[0]) <= tolerancia and 
+            abs(g - cor_alvo[1]) <= tolerancia and 
+            abs(b - cor_alvo[2]) <= tolerancia)
 
-def encontrar_faixa_azul(imagem, cor_alvo, tolerancia=15, altura_faixa=10): # ATUALIZAR a altura da faixa
+def encontrar_padrao_questoes(imagem, tolerancia_cor=20):
     """
-    Encontra posições onde há uma faixa horizontal da cor especificada
+    Percorre o último pixel da direita buscando um dos dois padrões verticais:
+    Padrão 1: 4px(35,31,32) -> 7px(255,255,255) -> 10px(189,188,188) -> 4px(35,31,32)
+    Padrão 2: 4px(35,31,32) -> 1px(189,188,188) -> 7px(255,255,255) -> 10px(189,188,188) -> 4px(35,31,32)
+    Com margem de erro de ±3px em cada faixa de altura.
     """
     largura, altura = imagem.size
     pixels = imagem.load()
-    
     posicoes_corte = []
     
-    # Percorre a imagem de cima para baixo
+    # Cores do padrão
+    c1_preto = (35, 31, 32)
+    c2_branco = (255, 255, 255)
+    c3_cinza = (189, 188, 188)
+    
+    # Posição X é o último pixel da direita
+    x = largura - 2 
+    
     y = 0
-    while y < altura - altura_faixa:
-        # Verifica se há uma faixa de 'altura_faixa' pixels da cor alvo
-        faixa_encontrada = True
+    while y < altura:
+        px = pixels[x, y]
         
-        for dy in range(altura_faixa):
-            # Pega a cor do pixel atual (verifica no último pixel da linha, ou seja, no canto da imagem)
-            pixel = pixels[largura-2, y + dy]  # CORRIGIDO: verificar o pixel próximo ao canto para evitar bordas
+        # Início de um possível padrão (Primeira faixa preta)
+        if cor_parecida(px, c1_preto, tolerancia_cor):
+            y_inicio_padrao = y
             
-            if len(pixel) == 4:  # RGBA
-                r, g, b, a = pixel
-            else:  # RGB
-                r, g, b = pixel[:3]
-            
-            # Verifica se a cor está dentro da tolerância
-            if (abs(r - cor_alvo[0]) > tolerancia or 
-                abs(g - cor_alvo[1]) > tolerancia or 
-                abs(b - cor_alvo[2]) > tolerancia):
-                faixa_encontrada = False
-                break
-        
-        if faixa_encontrada:
-            # Corta ANTES da faixa azul (no pixel anterior)
-            posicao_corte = y - 13  # CORREÇÃO: definir a variável
-            if posicao_corte < 0:  # Evitar posições negativas
-                posicao_corte = 0
+            # Conta pixels da primeira faixa preta (Esperado: 4px | Margem: 1 a 7)
+            count_preto1 = 0
+            while y < altura and cor_parecida(pixels[x, y], c1_preto, tolerancia_cor):
+                count_preto1 += 1
+                y += 1
                 
-            posicoes_corte.append(posicao_corte)
-            print(f"Faixa azul encontrada começando em y={y}, cortando em y={posicao_corte}")
-            # Pula a faixa inteira para evitar detecções múltiplas
-            y += altura_faixa
+            if not (1 <= count_preto1 <= 7):
+                continue # Fora da margem de erro, recomeça a busca
+                
+            if y >= altura: break
+            
+            # Verifica qual é a próxima cor (Branco para Padrão 1, Cinza para Padrão 2)
+            px_seguinte = pixels[x, y]
+            
+            # ========= TENTA PADRÃO 1 =========
+            if cor_parecida(px_seguinte, c2_branco, tolerancia_cor):
+                # Faixa branca (Esperado: 7px | Margem: 4 a 10)
+                count_branco = 0
+                while y < altura and cor_parecida(pixels[x, y], c2_branco, tolerancia_cor):
+                    count_branco += 1
+                    y += 1
+                if not (4 <= count_branco <= 10): continue
+                
+                # Faixa cinza (Esperado: 10px | Margem: 7 a 13)
+                count_cinza = 0
+                while y < altura and cor_parecida(pixels[x, y], c3_cinza, tolerancia_cor):
+                    count_cinza += 1
+                    y += 1
+                if not (7 <= count_cinza <= 13): continue
+                
+                # Faixa preta final (Esperado: 4px | Margem: 1 a 7)
+                count_preto2 = 0
+                while y < altura and cor_parecida(pixels[x, y], c1_preto, tolerancia_cor):
+                    count_preto2 += 1
+                    y += 1
+                if not (1 <= count_preto2 <= 7): continue
+                
+                # Padrão 1 encontrado! Corta 12 pixels antes do início.
+                corte = max(0, y_inicio_padrao - 12)
+                posicoes_corte.append((corte, y))
+                print(f"Padrão 1 encontrado em y={y_inicio_padrao}, cortando em y={corte}")
+                
+            # ========= TENTA PADRÃO 2 =========
+            elif cor_parecida(px_seguinte, c3_cinza, tolerancia_cor):
+                # Faixa cinza fina (Esperado: 1px | Margem: 1 a 4) -> (1-3 <= 0, então mínimo 1)
+                count_cinza1 = 0
+                while y < altura and cor_parecida(pixels[x, y], c3_cinza, tolerancia_cor):
+                    count_cinza1 += 1
+                    y += 1
+                if not (1 <= count_cinza1 <= 4): continue
+                
+                # Faixa branca (Esperado: 7px | Margem: 4 a 10)
+                count_branco = 0
+                while y < altura and cor_parecida(pixels[x, y], c2_branco, tolerancia_cor):
+                    count_branco += 1
+                    y += 1
+                if not (4 <= count_branco <= 10): continue
+                
+                # Faixa cinza grossa (Esperado: 10px | Margem: 7 a 13)
+                count_cinza2 = 0
+                while y < altura and cor_parecida(pixels[x, y], c3_cinza, tolerancia_cor):
+                    count_cinza2 += 1
+                    y += 1
+                if not (7 <= count_cinza2 <= 13): continue
+                
+                # Faixa preta final (Esperado: 4px | Margem: 1 a 7)
+                count_preto2 = 0
+                while y < altura and cor_parecida(pixels[x, y], c1_preto, tolerancia_cor):
+                    count_preto2 += 1
+                    y += 1
+                if not (1 <= count_preto2 <= 7): continue
+                
+                # Padrão 2 encontrado! Corta 12 pixels antes do início.
+                corte = max(0, y_inicio_padrao - 12)
+                posicoes_corte.append((corte, y))
+                print(f"Padrão 2 encontrado em y={y_inicio_padrao}, cortando em y={corte}")
+            
+            else:
+                # Se não for nem branco nem cinza, apenas recomeça o loop na nova posição de Y
+                pass 
         else:
             y += 1
-    
-    return posicoes_corte
+            
+    # Retorna apenas os pontos de corte 
+    return [c[0] for c in posicoes_corte]
 
-def dividir_imagem_por_faixas(caminho_imagem, pasta_saida, cor_alvo):
+def dividir_imagem_por_padrao(caminho_imagem, pasta_saida):
     """
-    Divide a imagem verticalmente cortando ANTES das faixas
+    Divide a imagem verticalmente cortando ANTES dos padrões visuais encontrados
     """
-    # Abre a imagem
     imagem = Image.open(caminho_imagem)
     largura, altura = imagem.size
     
     print(f"Imagem carregada: {largura}x{altura} pixels")
     
-    # Encontra as posições das faixas azuis
-    posicoes_corte = encontrar_faixa_azul(imagem, cor_alvo)
+    posicoes_corte = encontrar_padrao_questoes(imagem)
     
     if not posicoes_corte:
-        print("Nenhuma faixa azul encontrada na imagem!")
+        print("Nenhum padrão de questão encontrado na imagem!")
         return
     
-    print(f"Encontradas {len(posicoes_corte)} faixas azuis para corte")
+    print(f"Encontrados {len(posicoes_corte)} padrões para corte")
     
-    # Cria a pasta de saída se não existir
     os.makedirs(pasta_saida, exist_ok=True)
     
-    # Corta as seções da imagem
     posicao_anterior = 0
     
     for i, posicao_corte in enumerate(posicoes_corte):
-        # Garantir que a posição de corte é válida
         if posicao_corte <= posicao_anterior:
             continue
             
-        # Corta a seção ANTES da faixa azul (do início anterior até o início da faixa)
+        # Corta do final da última seção até 12 pixels antes do novo padrão
         area_corte = (0, posicao_anterior, largura, posicao_corte)
         secao = imagem.crop(area_corte)
         
-        # Salva a imagem cortada
         nome_arquivo = f"parte_{i+1:03d}.png"
         caminho_completo = os.path.join(pasta_saida, nome_arquivo)
         secao.save(caminho_completo)
         print(f"Salvo: {caminho_completo} ({secao.width}x{secao.height}px)")
         
-        # A próxima seção começa após o final desta faixa azul
-        posicao_anterior = posicao_corte + 10  # Pula a faixa azul de 10 pixels
+        # Atualiza a posição anterior para ser onde a nova questão deve começar (no corte atual)
+        posicao_anterior = posicao_corte 
     
-    # Corta a seção final (após a última faixa azul)
+    # Corta a seção final (após o último corte até o fim da imagem)
     if posicao_anterior < altura:
         area_corte = (0, posicao_anterior, largura, altura)
         secao = imagem.crop(area_corte)
@@ -135,14 +184,10 @@ def dividir_imagem_por_faixas(caminho_imagem, pasta_saida, cor_alvo):
         print(f"Salvo: {caminho_completo} ({secao.width}x{secao.height}px)")
 
 if __name__ == "__main__":
-    caminho_imagem = "colunas_concatenadas_verticalmente.png"  # Substitua pelo caminho da sua imagem
-    pasta_saida = "questoes" # Substitua pelo nome da pasta de saída desejada
-
-    # Converte a cor do GIMP 0a100 para RGB (0a255)
-    cor_do_padrao = converter_cor_gimp_para_rgb(25.1, 75.7, 95.3) # COLOCAR O RGB CORRETO DA FAIXA QUE DIVIDE AS QUESTÕES (0a100 do GIMP)
-    print(f"Cor convertida: RGB{cor_do_padrao}")
+    caminho_imagem = "colunas_concatenadas_verticalmente.png"  
+    pasta_saida = "questoes" 
     
-    # Executa a divisão
-    dividir_imagem_por_faixas(caminho_imagem, pasta_saida, cor_do_padrao)
+    # Executa a divisão sem necessidade da função antiga de conversão do GIMP
+    dividir_imagem_por_padrao(caminho_imagem, pasta_saida)
     
     print("Divisão concluída!")
