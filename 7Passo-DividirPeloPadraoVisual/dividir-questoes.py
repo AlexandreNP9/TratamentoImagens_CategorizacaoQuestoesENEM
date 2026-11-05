@@ -135,8 +135,8 @@ def dividir_imagem_por_faixas(caminho_imagem, pasta_saida, cor_alvo):
         print(f"Salvo: {caminho_completo} ({secao.width}x{secao.height}px)")
 
 if __name__ == "__main__":
-    caminho_imagem = "NOME-DA-SUA-IMAGEM.png"  # Substitua pelo caminho da sua imagem
-    pasta_saida = "NOME-PASTA-SAIDA" # Substitua pelo nome da pasta de saída desejada
+    caminho_imagem = "colunas_concatenadas_verticalmente.png"  # Substitua pelo caminho da sua imagem
+    pasta_saida = "questoes" # Substitua pelo nome da pasta de saída desejada
 
     # Converte a cor do GIMP 0a100 para RGB (0a255)
     cor_do_padrao = converter_cor_gimp_para_rgb(25.1, 75.7, 95.3) # COLOCAR O RGB CORRETO DA FAIXA QUE DIVIDE AS QUESTÕES (0a100 do GIMP)
