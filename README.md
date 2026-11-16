@@ -1,3 +1,6 @@
+Link das imagens recortadas por mim  
+https://drive.google.com/drive/folders/1au7RadrtwQsVkChNdp03RIuEYM2hfTQ2?usp=sharing
+
 Olá, seja bem-vindo(a) ao meu repositório!
 
 # Esse repositório tem várias branches.
