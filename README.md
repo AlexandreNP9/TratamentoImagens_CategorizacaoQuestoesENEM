@@ -1,17 +1,19 @@
-Link das imagens recortadas por mim  
+Link com todas as questões recortadas:  
 https://drive.google.com/drive/folders/1au7RadrtwQsVkChNdp03RIuEYM2hfTQ2?usp=sharing
 
-Olá, seja bem-vindo(a) ao meu repositório!
+# Olá, seja bem-vindo(a) ao meu repositório!
 
-# Esse repositório tem várias branches.
-# Aqui na ```main``` tem apenas esse README.
-# Nas outras branches tem os códigos.
+Aqui na ```main``` tem apenas esse README e o LICENSE.  
 
-# OBJETIVO
+A branch ```generico-para-todas-provas``` contém os códigos genéricos para serem adaptados ao caderno do ENEM que você for recortar.  
+
+A branch ```2024-dia1-caderno1-azul-regular``` serve de exemplo aplicado com o respectivo caderno de seu nome.  
+
+# Objetivo
 Este repositório é para aprender a tratar as imagens dos cadernos de questões do ENEM.  
 O objetivo desta fase é ter uma questão por imagem, com o devido nome.  
 
-## Alguns problemas para você considerar:  
+# Algumas situações para você considerar:  
 Tenha em mente que as imagens que você preparar aqui, vai usar em fases futuras desse projeto de Categorização das Questões do ENEM.  
 
 Tem situações em que duas questões ou mais se baseiam no mesmo texto base. Será que é interessante manter o texto base em cada uma das perguntas?  
