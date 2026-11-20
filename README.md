@@ -14,11 +14,11 @@ Este repositório é para aprender a tratar as imagens dos cadernos de questões
 O objetivo desta fase é ter uma questão por imagem, com o devido nome.  
 
 # Algumas situações para você considerar:  
-Tenha em mente que as imagens que você preparar aqui, vai usar em fases futuras desse projeto de Categorização das Questões do ENEM.  
+Tenha em mente de que as imagens que você preparar aqui serão utilizadas em fases futuras desse projeto de Categorização das Questões do ENEM. Por isso, faça de maneira PERFEITA!  
 
-Tem situações em que duas questões ou mais se baseiam no mesmo texto base. Será que é interessante manter o texto base em cada uma das perguntas?  
+Tem casos em que várias questões são baseadas em um mesmo texto base. Será que é interessante manter o texto base em cada uma das perguntas? Pense sobre isso...  
 
-Adote uma postura de dono(a) do negócio, faça de forma excelente!
+Adote uma postura de dono(a) do negócio, faça de forma EXCELENTE!
 
 # Especificidades técnicas
 Linux ou Windows  
@@ -26,11 +26,11 @@ Precisa ter instalado o git, o python e o VSCode
 Vai usar também o GIMP (Programa de Manipulação de Imagem do GNU)
 
 # O que fazer agora?
-Nas branches, cada pasta tem códigos e instruções específicas.  
+Na branch ```generico-para-todas-provas```, cada pasta tem códigos e instruções específicas.  
 
-Copie a estrutura de passos e códigos aqui das branches para você fazer no seu repositório.  
+Copie a estrutura de passos e códigos para você fazer no seu próprio repositório.  
 
-Esses vídeos podem te ajudar  
+Esses vídeos podem te ajudar:  
 2024-dia1-caderno1-azul-aplicacaoRegular: https://www.youtube.com/watch?v=rRXiXVVmiC8  
 prova-generica:  https://www.youtube.com/watch?v=QO6lWs87Mgc  
 
